@@ -19,6 +19,18 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	UPROPERTY(VisibleAnywhere)
+	int32 VisibleAnywhereInt = 12;
+
+	UPROPERTY(EditAnywhere)
+	int32 EditAnywhereInt = 13;
+
+	UPROPERTY(VisibleInstanceOnly)
+	int32 VisibleInstanceOnlyInt = 14;
+
+	UPROPERTY(EditAnywhere)
+	float Speed = 400.f;
+
 private:
 	UPROPERTY()
 	class UCapsuleComponent* CapsuleComp;
