@@ -60,15 +60,18 @@ void ATank::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	//if(UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
 	//{
 	//	EnhancedInputComponent->BindAction(MoveForwardAction, ETriggerEvent::Triggered, this, &ATank::Move_Enhanced);
+	//	EnhancedInputComponent->BindAction(TurnAction, ETriggerEvent::Triggered, this, &ATank::Move_Enhanced);
 	//}
 
 	PlayerInputComponent->BindAxis(TEXT("MoveForward"), this, &ATank::Move);
+	PlayerInputComponent->BindAxis(TEXT("Turn"), this, &ATank::Turn);
 }
 
 void ATank::Move_Enhanced(const FInputActionValue& Value)
 {
 	float v = Value.Get<float>();
 	UE_LOG(LogTemp, Display, TEXT("Move : %f"), v);
+	Move(v);
 }
 
 void ATank::Move(float Value)
@@ -76,7 +79,22 @@ void ATank::Move(float Value)
 	FVector DeltaLocation = FVector::ZeroVector;
 
 	DeltaLocation.X = Value * Speed * UGameplayStatics::GetWorldDeltaSeconds(this);
-	AddActorLocalOffset(DeltaLocation);
+	AddActorLocalOffset(DeltaLocation, true);
+}
+
+void ATank::Turn_Enhanced(const FInputActionValue& Value)
+{
+	float v = Value.Get<float>();
+	UE_LOG(LogTemp, Display, TEXT("Turn : %f"), v);
+	Turn(v);
+}
+
+void ATank::Turn(float Value)
+{
+	FRotator DeltaRotation = FRotator::ZeroRotator;
+
+	DeltaRotation.Yaw = Value * TurnRate * UGameplayStatics::GetWorldDeltaSeconds(this);
+	AddActorLocalRotation(DeltaRotation, true);
 }
 
 
