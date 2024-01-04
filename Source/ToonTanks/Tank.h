@@ -24,6 +24,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+
 private:
 	UPROPERTY(VisibleAnywhere, Category="Components")
 	class USpringArmComponent* SpringArm;
@@ -42,6 +43,9 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = Input)
 	class UInputAction* RotateTurretAction;
+
+	UPROPERTY(EditAnywhere, Category = Movement)
+	float Speed = 200.f;
 
 	void Move_Enhanced(const struct FInputActionValue& Value);
 

@@ -8,6 +8,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputMappingContext.h"
+#include "Kismet/GameplayStatics.h"
 
 
 ATank::ATank()
@@ -73,8 +74,8 @@ void ATank::Move_Enhanced(const FInputActionValue& Value)
 void ATank::Move(float Value)
 {
 	FVector DeltaLocation = FVector::ZeroVector;
-	DeltaLocation.X = Value;
 
+	DeltaLocation.X = Value * Speed * UGameplayStatics::GetWorldDeltaSeconds(this);
 	AddActorLocalOffset(DeltaLocation);
 }
 

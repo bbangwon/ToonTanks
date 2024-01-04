@@ -19,21 +19,6 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	UPROPERTY(VisibleInstanceOnly)
-	int32 VisibleInstanceOnlyInt = 14;
-
-	UPROPERTY(VisibleDefaultsOnly)
-	int32 VisibleDefaultsOnlyInt = 15;
-
-	UPROPERTY(EditDefaultsOnly)
-	int32 EditDefaultsOnlyInt = 16;
-
-	UPROPERTY(EditInstanceOnly)
-	int32 EditInstanceOnlyInt = 17;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float Speed = 400.f;
-
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta = (AllowPrivateAccess = "true"))
 	class UCapsuleComponent* CapsuleComp;
