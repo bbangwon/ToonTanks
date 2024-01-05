@@ -9,6 +9,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputMappingContext.h"
 #include "Kismet/GameplayStatics.h"
+#include "DrawDebugHelpers.h"
 
 
 ATank::ATank()
@@ -49,6 +50,8 @@ void ATank::BeginPlay()
 	//		SubSystem->AddMappingContext(DefaultContext, 0);
 	//	}
 	//}
+
+	PlayerControllerRef = Cast<APlayerController>(GetController());
 }
 
 // Called to bind functionality to input
@@ -95,6 +98,31 @@ void ATank::Turn(float Value)
 
 	DeltaRotation.Yaw = Value * TurnRate * UGameplayStatics::GetWorldDeltaSeconds(this);
 	AddActorLocalRotation(DeltaRotation, true);
+}
+
+// Called every frame
+void ATank::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	if (PlayerControllerRef)
+	{
+		FHitResult HitResult;
+
+		if (PlayerControllerRef->GetHitResultUnderCursor(
+			ECollisionChannel::ECC_Visibility,
+			false,
+			HitResult))
+		{
+			DrawDebugSphere(
+				GetWorld(),
+				HitResult.ImpactPoint,
+				25.f,
+				12,
+				FColor::Red,
+				false);
+		}
+	}
 }
 
 
