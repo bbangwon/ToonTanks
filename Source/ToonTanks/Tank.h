@@ -47,6 +47,9 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = Input)
 	class UInputAction* RotateTurretAction;
 
+	UPROPERTY(VisibleAnywhere, Category = Input)
+	class UInputAction* FireAction;
+
 	UPROPERTY(EditAnywhere, Category = Movement)
 	float Speed = 200.f;
 
@@ -58,6 +61,8 @@ private:
 
 	void Turn_Enhanced(const struct FInputActionValue& Value);
 	void Turn(float Value);
+
+	void Fire_Enhanced(const struct FInputActionValue& Value);
 
 	APlayerController* PlayerControllerRef;
 };

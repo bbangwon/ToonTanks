@@ -36,6 +36,10 @@ ATank::ATank()
 	static ConstructorHelpers::FObjectFinder<UInputAction> IA_ROTATE_TURRET(TEXT("/Game/Input/Actions/iA_RotateTurret"));
 	if (IA_ROTATE_TURRET.Succeeded())
 		RotateTurretAction = IA_ROTATE_TURRET.Object;
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> IA_FIRE(TEXT("/Game/Input/Actions/iA_Fire"));
+	if(IA_FIRE.Succeeded())
+		FireAction = IA_FIRE.Object;
 }
 
 void ATank::BeginPlay()
@@ -63,11 +67,13 @@ void ATank::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	//if(UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
 	//{
 	//	EnhancedInputComponent->BindAction(MoveForwardAction, ETriggerEvent::Triggered, this, &ATank::Move_Enhanced);
-	//	EnhancedInputComponent->BindAction(TurnAction, ETriggerEvent::Triggered, this, &ATank::Move_Enhanced);
+	//	EnhancedInputComponent->BindAction(TurnAction, ETriggerEvent::Triggered, this, &ATank::Turn_Enhanced);
+	//	EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Triggered, this, &ATank::Fire_Enhanced);
 	//}
 
 	PlayerInputComponent->BindAxis(TEXT("MoveForward"), this, &ATank::Move);
 	PlayerInputComponent->BindAxis(TEXT("Turn"), this, &ATank::Turn);
+	PlayerInputComponent->BindAction(TEXT("Fire"), IE_Pressed, this, &ATank::Fire);
 }
 
 void ATank::Move_Enhanced(const FInputActionValue& Value)
@@ -100,6 +106,12 @@ void ATank::Turn(float Value)
 	AddActorLocalRotation(DeltaRotation, true);
 }
 
+void ATank::Fire_Enhanced(const FInputActionValue& Value)
+{
+	UE_LOG(LogTemp, Display, TEXT("Fire_Enhanced"));
+	Fire();
+}
+
 // Called every frame
 void ATank::Tick(float DeltaTime)
 {
@@ -114,14 +126,6 @@ void ATank::Tick(float DeltaTime)
 			false,
 			HitResult))
 		{
-			DrawDebugSphere(
-				GetWorld(),
-				HitResult.ImpactPoint,
-				25.f,
-				12,
-				FColor::Red,
-				false);
-
 			RotateTurret(HitResult.ImpactPoint);
 		}
 	}
