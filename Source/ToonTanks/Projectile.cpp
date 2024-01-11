@@ -23,12 +23,29 @@ void AProjectile::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	ProjectileMesh->OnComponentHit.AddDynamic(this, &AProjectile::OnHit);
+
 }
+
+
 
 // Called every frame
 void AProjectile::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+/// <summary>
+/// Hit event for the projectile
+/// </summary>
+/// <param name="HitComp">부딪히는 일을 하는 컴포넌트(발사체 메시)</param>
+/// <param name="OtherActor">충돌을 당하는 액터</param>
+/// <param name="OtherComp">충돌을 당하는 컴포넌트</param>
+/// <param name="NormalImpulse">물리 시뮬레이션을 할때 물리 엔진이 충돌시 임펄스 적용. 이때 임펄스의 방향과 크기</param>
+/// <param name="Hit">충돌에 대한 추가적인 정보</param>
+void AProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+{
+	UE_LOG(LogTemp, Display, TEXT("OnHit HitComp : %s, OtherActor : %s, OtherComp : %s"), *HitComp->GetName(), *OtherActor->GetName(), *OtherComp->GetName());
 }
 
