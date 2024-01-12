@@ -48,10 +48,12 @@ void ABasePawn::Fire()
 
 	if (ProjectileClass)
 	{
-		GetWorld()->SpawnActor<AProjectile>(
+		auto Projectile = GetWorld()->SpawnActor<AProjectile>(
 			ProjectileClass,
 			Location,
 			Rotation);
+
+		Projectile->SetOwner(this);
 	}	
 }
 

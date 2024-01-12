@@ -45,6 +45,9 @@ void UHealthComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 /// <param name="DamageCauser">데미지 준 액터</param>
 void UHealthComponent::DamgeTaken(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* Instigator, AActor* DamageCauser)
 {
+	if (Damage <= 0.f) return;
+	Health -= Damage;
 
+	UE_LOG(LogTemp, Warning, TEXT("Health: %f"), Health);
 }
 
