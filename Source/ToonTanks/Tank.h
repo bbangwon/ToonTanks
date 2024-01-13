@@ -25,7 +25,7 @@ public:
 
 	void HandleDestruction();
 
-	APlayerController* GetTankPlaterController() const { return TankPlayerController; }
+	APlayerController* GetTankPlayerController() const { return TankPlayerController; }
 
 protected:
 	// Called when the game starts or when spawned
