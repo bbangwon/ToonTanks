@@ -11,6 +11,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "DrawDebugHelpers.h"
 
+#define ENHANCED_INPUT 0
 
 ATank::ATank()
 {
@@ -47,15 +48,17 @@ void ATank::BeginPlay()
 	Super::BeginPlay();
 
 	//Enhanced Input
-	//if(APlayerController* PlayerController = Cast<APlayerController>(GetController()))
-	//{
-	//	if (UEnhancedInputLocalPlayerSubsystem* SubSystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
-	//	{
-	//		SubSystem->AddMappingContext(DefaultContext, 0);
-	//	}
-	//}
-
-	PlayerControllerRef = Cast<APlayerController>(GetController());
+#if ENHANCED_INPUT
+	if(APlayerController* PlayerController = Cast<APlayerController>(GetController()))
+	{
+		if (UEnhancedInputLocalPlayerSubsystem* SubSystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+		{
+			SubSystem->AddMappingContext(DefaultContext, 0);
+		}
+	}
+#else
+	TankPlayerController = Cast<APlayerController>(GetController());
+#endif
 }
 
 // Called to bind functionality to input
@@ -64,23 +67,23 @@ void ATank::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 	//Enhanced Input
-	//if(UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
-	//{
-	//	EnhancedInputComponent->BindAction(MoveForwardAction, ETriggerEvent::Triggered, this, &ATank::Move_Enhanced);
-	//	EnhancedInputComponent->BindAction(TurnAction, ETriggerEvent::Triggered, this, &ATank::Turn_Enhanced);
-	//	EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Triggered, this, &ATank::Fire_Enhanced);
-	//}
-
+#if ENHANCED_INPUT
+	if(UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
+	{
+		EnhancedInputComponent->BindAction(MoveForwardAction, ETriggerEvent::Triggered, this, &ATank::Move_Enhanced);
+		EnhancedInputComponent->BindAction(TurnAction, ETriggerEvent::Triggered, this, &ATank::Turn_Enhanced);
+		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Triggered, this, &ATank::Fire_Enhanced);
+	}
+#else
 	PlayerInputComponent->BindAxis(TEXT("MoveForward"), this, &ATank::Move);
 	PlayerInputComponent->BindAxis(TEXT("Turn"), this, &ATank::Turn);
 	PlayerInputComponent->BindAction(TEXT("Fire"), IE_Pressed, this, &ATank::Fire);
+#endif
 }
 
 void ATank::Move_Enhanced(const FInputActionValue& Value)
 {
-	float v = Value.Get<float>();
-	UE_LOG(LogTemp, Display, TEXT("Move : %f"), v);
-	Move(v);
+	Move(Value.Get<float>());
 }
 
 void ATank::Move(float Value)
@@ -93,9 +96,7 @@ void ATank::Move(float Value)
 
 void ATank::Turn_Enhanced(const FInputActionValue& Value)
 {
-	float v = Value.Get<float>();
-	UE_LOG(LogTemp, Display, TEXT("Turn : %f"), v);
-	Turn(v);
+	Turn(Value.Get<float>());
 }
 
 void ATank::Turn(float Value)
@@ -108,7 +109,6 @@ void ATank::Turn(float Value)
 
 void ATank::Fire_Enhanced(const FInputActionValue& Value)
 {
-	UE_LOG(LogTemp, Display, TEXT("Fire_Enhanced"));
 	Fire();
 }
 
@@ -117,11 +117,11 @@ void ATank::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (PlayerControllerRef)
+	if (TankPlayerController)
 	{
 		FHitResult HitResult;
 
-		if (PlayerControllerRef->GetHitResultUnderCursor(
+		if (TankPlayerController->GetHitResultUnderCursor(
 			ECollisionChannel::ECC_Visibility,
 			false,
 			HitResult))
@@ -129,6 +129,15 @@ void ATank::Tick(float DeltaTime)
 			RotateTurret(HitResult.ImpactPoint);
 		}
 	}
+}
+
+void ATank::HandleDestruction()
+{
+	Super::HandleDestruction();
+
+	//탱크는 숨기고 Tick을 멈춘다.
+	SetActorHiddenInGame(true);
+	SetActorTickEnabled(false);
 }
 
 

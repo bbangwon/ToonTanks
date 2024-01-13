@@ -25,6 +25,11 @@ ABasePawn::ABasePawn()
 	ProjectileSpawnPoint->SetupAttachment(TurretMesh);
 }
 
+void ABasePawn::HandleDestruction()
+{
+	//TODO: Visual and Sound Effects
+}
+
 void ABasePawn::RotateTurret(FVector LookAtTarget)
 {
 	//월드 스페이스
