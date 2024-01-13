@@ -6,13 +6,38 @@
 #include "Tank.h"
 #include "Tower.h"
 #include "ToonTanksPlayerController.h"
+#include "TimerManager.h"
 
 void AToonTanksGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 
+	HandleGameStart();
+}
+
+void AToonTanksGameMode::HandleGameStart()
+{
 	Tank = Cast<ATank>(UGameplayStatics::GetPlayerPawn(this, 0));
 	ToonTanksPlayerController = Cast<AToonTanksPlayerController>(UGameplayStatics::GetPlayerController(this, 0));
+
+	if (ToonTanksPlayerController)
+	{
+		ToonTanksPlayerController->SetPlayerEnabledState(false);
+
+		// 타이머 설정 (3초 후에 게임 시작)
+		FTimerHandle PlayerEnableTimerHandle;
+		FTimerDelegate PlayerEnableTimerDelegate = FTimerDelegate::CreateUObject(
+			ToonTanksPlayerController, 
+			&AToonTanksPlayerController::SetPlayerEnabledState, 
+			true
+		);
+		
+		GetWorldTimerManager().SetTimer(PlayerEnableTimerHandle, 
+			PlayerEnableTimerDelegate, 
+			StartDelay, 
+			false
+		);
+	}
 }
 
 void AToonTanksGameMode::ActorDied(AActor* DeadActor)
