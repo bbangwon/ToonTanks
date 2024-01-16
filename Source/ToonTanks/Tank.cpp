@@ -138,6 +138,8 @@ void ATank::HandleDestruction()
 	//탱크는 숨기고 Tick을 멈춘다.
 	SetActorHiddenInGame(true);
 	SetActorTickEnabled(false);
+
+	bAlive = false;
 }
 
 
